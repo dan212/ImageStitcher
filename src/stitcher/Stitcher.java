@@ -79,16 +79,8 @@ public class Stitcher {
 	}
 
 	public static void main(String[] args) {
-		/*
-		 * String path = "C:\\Users\\dan\\Desktop\\RGC_Resourses"; FilePile fp = null;
-		 * try { fp = new FilePile(path); } catch (IOException e) { e.printStackTrace();
-		 * }
-		 * 
-		 * fp.getImagePaths().forEach(System.out::println);
-		 */
 		Stitcher st = new Stitcher();
 		st.UIInit();
-
 	}
 
 }
