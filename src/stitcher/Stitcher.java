@@ -3,7 +3,6 @@ package stitcher;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import javax.swing.*;
-import java.awt.image.*;
 import java.io.IOException;
 
 public class Stitcher {
@@ -17,7 +16,7 @@ public class Stitcher {
 	String outputPath;
 	FilePile fp = null;
 	ImageStitcher sch = null;
-	
+
 	private void UIInit() {
 		ActionHandler aHandler = new ActionHandler();
 		frame = new JFrame("Glue dem screencaps together dawg");
@@ -28,23 +27,23 @@ public class Stitcher {
 		stitchButton = new JButton("Stitch");
 		stitchButton.setActionCommand("stitch");
 		stitchButton.addActionListener(aHandler);
-		
+
 		control = new JPanel();
 		control.add(inputRootField);
 		control.add(outputLocationField);
 		control.add(stitchButton);
-		
+
 		frame.setLayout(new java.awt.BorderLayout());
-		frame.add(control,java.awt.BorderLayout.CENTER);
+		frame.add(control, java.awt.BorderLayout.CENTER);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		
+
 		frame.pack();
 		frame.setVisible(true);
 		frame.setResizable(false);
 	}
-	
+
 	public void stitchAction() {
-		if(inputRootField.getText() != "") {
+		if (inputRootField.getText() != "") {
 			rootPath = inputRootField.getText();
 			if (outputLocationField.getText() != "") {
 				outputPath = rootPath;
@@ -52,7 +51,7 @@ public class Stitcher {
 			}
 			if (fp == null) {
 				try {
-					fp  = new FilePile(rootPath);
+					fp = new FilePile(rootPath);
 				} catch (IOException ex) {
 					ex.printStackTrace();
 				}
@@ -63,37 +62,33 @@ public class Stitcher {
 					ex.printStackTrace();
 				}
 			}
-			
-			sch = new ImageStitcher(fp.getImagePaths(),outputPath,stitcher.ImageStitcher.Direction.DOWN);
+
+			sch = new ImageStitcher(fp.getImagePaths(), outputPath, stitcher.ImageStitcher.Direction.DOWN);
 			sch.combineAll();
-		}
-		else {
+		} else {
 			outputLocationField.setText("Hey, set this first, dumbass!");
 		}
 	}
-	
-	
-	public class ActionHandler implements ActionListener{
+
+	public class ActionHandler implements ActionListener {
 		public void actionPerformed(ActionEvent e) {
 			if (e.getActionCommand() == "stitch") {
 				stitchAction();
 			}
 		}
 	}
-	
+
 	public static void main(String[] args) {
-		/*String path = "C:\\Users\\dan\\Desktop\\RGC_Resourses";
-		FilePile fp = null;
-		try {
-			fp  = new FilePile(path);
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		
-		fp.getImagePaths().forEach(System.out::println);*/
+		/*
+		 * String path = "C:\\Users\\dan\\Desktop\\RGC_Resourses"; FilePile fp = null;
+		 * try { fp = new FilePile(path); } catch (IOException e) { e.printStackTrace();
+		 * }
+		 * 
+		 * fp.getImagePaths().forEach(System.out::println);
+		 */
 		Stitcher st = new Stitcher();
 		st.UIInit();
-		
+
 	}
 
 }
