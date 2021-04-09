@@ -14,6 +14,7 @@ public class Stitcher {
 	JPanel control;
 	JTextArea logBox;
 	JTextAreaOutputStream logBoxStream;
+	JComboBox<ImageStitcher.Direction> dirComboBox;
 	String rootPath;
 	String outputPath;
 	FilePile fp = null;
@@ -29,12 +30,17 @@ public class Stitcher {
 		stitchButton.addActionListener(aHandler);
 		logBox = new JTextArea(20, 40);
 		logBox.setEditable(false);
+		dirComboBox = new JComboBox<ImageStitcher.Direction>();
+		dirComboBox.addItem(ImageStitcher.Direction.DOWN);
+		dirComboBox.addItem(ImageStitcher.Direction.RIGHT);
+		dirComboBox.addActionListener(aHandler);
 
 		logBoxStream = new JTextAreaOutputStream(logBox);
 		System.setOut(new PrintStream(logBoxStream));
 
 		control = new JPanel();
 		control.add(inputRootField);
+		control.add(dirComboBox);
 		control.add(stitchButton);
 
 		frame.setLayout(new java.awt.BorderLayout());
@@ -68,8 +74,14 @@ public class Stitcher {
 					ex.printStackTrace();
 				}
 			}
-
-			sch = new ImageStitcher(fp.getImagePaths(), outputPath, stitcher.ImageStitcher.Direction.DOWN);
+			if (sch == null) {
+				sch = new ImageStitcher(fp.getImagePaths(), outputPath, (ImageStitcher.Direction)dirComboBox.getSelectedItem());
+			}
+			else {
+				sch.setDir((ImageStitcher.Direction)dirComboBox.getSelectedItem());
+				sch.setImagePaths(fp.getImagePaths());
+				sch.setEndPath(outputPath);
+			}
 			sch.combineAll();
 		} else {
 			inputRootField.setText("Hey, set this first, dumbass!");

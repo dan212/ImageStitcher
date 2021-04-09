@@ -13,18 +13,18 @@ import javax.imageio.ImageIO;
 public class ImageStitcher {
 
 	public enum Direction {
-		DOWN, LEFT
+		DOWN, RIGHT
 	}
 
 	private Vector<String> imagePaths;
 	private String endPath;
-	Direction dir;
+	private Direction dir;
 	BufferedImage combined;
 
 	public ImageStitcher(Vector<String> imagePaths, String end, Direction d) {
 		this.imagePaths = imagePaths;
-		endPath = end;
-		dir = d;
+		setEndPath(end);
+		setDir(d);
 	}
 
 	public Vector<String> getImagePaths() {
@@ -49,12 +49,12 @@ public class ImageStitcher {
 			System.out.print(path);
 			int w = 0;
 			int h = 0;
-			switch (dir) {
+			switch (getDir()) {
 			case DOWN:
 				w = Math.max(getCombined().getWidth(), curImage.getWidth(null));
 				h = getCombined().getHeight() + curImage.getHeight(null);
 				break;
-			case LEFT:
+			case RIGHT:
 				w = getCombined().getWidth()+ curImage.getWidth(null);
 				h = Math.max(getCombined().getHeight(), curImage.getHeight(null));
 				break;
@@ -63,11 +63,11 @@ public class ImageStitcher {
 			temp = new BufferedImage(w, h, BufferedImage.TYPE_INT_RGB);
 			Graphics2D g = temp.createGraphics();
 			g.drawImage(getCombined(), 0, 0, null);
-			switch (dir) {
+			switch (getDir()) {
 			case DOWN:
 				g.drawImage(curImage, 0, getCombined().getHeight(), null);
 				break;
-			case LEFT:
+			case RIGHT:
 				g.drawImage(curImage, getCombined().getWidth(), 0, null);
 				break;
 			default:
@@ -79,13 +79,13 @@ public class ImageStitcher {
 			System.out.println("... Done!");
 		}
 		try {
-			ImageIO.write(combined, "PNG", new File(endPath, "combined.png"));
-			System.out.println("Job's done! End file is " + endPath + "\\combined.png");
-			switch (dir) {
+			ImageIO.write(combined, "PNG", new File(getEndPath(), "combined.png"));
+			System.out.println("Job's done! End file is " + getEndPath() + "\\combined.png");
+			switch (getDir()) {
 			case DOWN:
 				System.out.print("Tall boy's size is " + combined.getHeight() + " pixels");
 				break;
-			case LEFT:
+			case RIGHT:
 				System.out.print("Wide boy's size is " + combined.getWidth() + " pixels");
 				break;
 			default:
@@ -98,6 +98,22 @@ public class ImageStitcher {
 
 	public BufferedImage getCombined() {
 		return combined;
+	}
+
+	public Direction getDir() {
+		return dir;
+	}
+
+	public void setDir(Direction dir) {
+		this.dir = dir;
+	}
+
+	public String getEndPath() {
+		return endPath;
+	}
+
+	public void setEndPath(String endPath) {
+		this.endPath = endPath;
 	}
 
 }
