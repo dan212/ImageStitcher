@@ -36,6 +36,7 @@ public class ImageStitcher {
 	}
 
 	public void combineAll() {
+		System.out.println("Began work");
 		combined = new BufferedImage(1, 1, BufferedImage.TYPE_INT_RGB);
 		BufferedImage temp;
 		Image curImage = null;
@@ -45,6 +46,7 @@ public class ImageStitcher {
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
+			System.out.print(path);
 			int w = 0;
 			int h = 0;
 			switch (dir) {
@@ -74,11 +76,21 @@ public class ImageStitcher {
 			curImage.flush();
 			temp.flush();
 			g.dispose();
+			System.out.println("... Done!");
 		}
 		try {
 			ImageIO.write(combined, "PNG", new File(endPath, "combined.png"));
+			System.out.println("Job's done! End file is " + endPath + "\\combined.png");
+			switch (dir) {
+			case DOWN:
+				System.out.print("Tall boy's size is " + combined.getHeight() + " pixels");
+				break;
+			case LEFT:
+				System.out.print("Wide boy's size is " + combined.getWidth() + " pixels");
+				break;
+			default:
+			}
 		} catch (IOException e) {
-			
 			e.printStackTrace();
 		}
 		combined.flush();

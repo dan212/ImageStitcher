@@ -4,6 +4,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import javax.swing.*;
 import java.io.IOException;
+import java.io.PrintStream;
 
 public class Stitcher {
 
@@ -11,6 +12,8 @@ public class Stitcher {
 	JTextField inputRootField;
 	JButton stitchButton;
 	JPanel control;
+	JTextArea logBox;
+	JTextAreaOutputStream logBoxStream;
 	String rootPath;
 	String outputPath;
 	FilePile fp = null;
@@ -24,6 +27,11 @@ public class Stitcher {
 		stitchButton = new JButton("Stitch");
 		stitchButton.setActionCommand("stitch");
 		stitchButton.addActionListener(aHandler);
+		logBox = new JTextArea(20, 40);
+		logBox.setEditable(false);
+
+		logBoxStream = new JTextAreaOutputStream(logBox);
+		System.setOut(new PrintStream(logBoxStream));
 
 		control = new JPanel();
 		control.add(inputRootField);
@@ -32,6 +40,10 @@ public class Stitcher {
 		frame.setLayout(new java.awt.BorderLayout());
 		frame.add(control, java.awt.BorderLayout.CENTER);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		frame.add(new JScrollPane(logBox, 
+				JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,
+				JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED), 
+		java.awt.BorderLayout.SOUTH);
 
 		frame.pack();
 		frame.setVisible(true);
@@ -39,6 +51,7 @@ public class Stitcher {
 	}
 
 	public void stitchAction() {
+		logBox.setText("");
 		if (inputRootField.getText() != "Path for pics go here") {
 			rootPath = inputRootField.getText();
 			outputPath = rootPath;
