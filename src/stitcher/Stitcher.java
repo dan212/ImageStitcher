@@ -9,7 +9,6 @@ public class Stitcher {
 
 	JFrame frame;
 	JTextField inputRootField;
-	JTextField outputLocationField;
 	JButton stitchButton;
 	JPanel control;
 	String rootPath;
@@ -21,16 +20,13 @@ public class Stitcher {
 		ActionHandler aHandler = new ActionHandler();
 		frame = new JFrame("Glue dem screencaps together dawg");
 		inputRootField = new JTextField(40);
-		outputLocationField = new JTextField(40);
 		inputRootField.setText("Path for pics go here");
-		outputLocationField.setText("Output Path (empty for same as input)");
 		stitchButton = new JButton("Stitch");
 		stitchButton.setActionCommand("stitch");
 		stitchButton.addActionListener(aHandler);
 
 		control = new JPanel();
 		control.add(inputRootField);
-		control.add(outputLocationField);
 		control.add(stitchButton);
 
 		frame.setLayout(new java.awt.BorderLayout());
@@ -43,12 +39,9 @@ public class Stitcher {
 	}
 
 	public void stitchAction() {
-		if (inputRootField.getText() != "") {
+		if (inputRootField.getText() != "Path for pics go here") {
 			rootPath = inputRootField.getText();
-			if (outputLocationField.getText() != "") {
-				outputPath = rootPath;
-				outputLocationField.setText(outputPath);
-			}
+			outputPath = rootPath;
 			if (fp == null) {
 				try {
 					fp = new FilePile(rootPath);
@@ -66,7 +59,7 @@ public class Stitcher {
 			sch = new ImageStitcher(fp.getImagePaths(), outputPath, stitcher.ImageStitcher.Direction.DOWN);
 			sch.combineAll();
 		} else {
-			outputLocationField.setText("Hey, set this first, dumbass!");
+			inputRootField.setText("Hey, set this first, dumbass!");
 		}
 	}
 

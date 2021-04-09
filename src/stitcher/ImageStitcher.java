@@ -1,7 +1,9 @@
 package stitcher;
 
-import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.Image;
 import java.awt.image.*;
+
 import java.io.File;
 import java.io.IOException;
 import java.util.Vector;
@@ -34,19 +36,30 @@ public class ImageStitcher {
 	}
 
 	public void combineAll() {
-		combined = new BufferedImage(1, 1, BufferedImage.TYPE_INT_ARGB);
+		combined = new BufferedImage(1, 1, BufferedImage.TYPE_INT_RGB);
 		BufferedImage temp;
-		BufferedImage curImage = new BufferedImage(1, 1, BufferedImage.TYPE_INT_ARGB);
+		Image curImage = null;
 		for (String path : imagePaths) {
 			try {
 				curImage = ImageIO.read(new File(path));
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
-			int w = Math.max(getCombined().getWidth(), curImage.getWidth());
-			int h = getCombined().getHeight() + curImage.getHeight();
-			temp = new BufferedImage(w, h, BufferedImage.TYPE_INT_ARGB);
-			Graphics g = temp.getGraphics();
+			int w = 0;
+			int h = 0;
+			switch (dir) {
+			case DOWN:
+				w = Math.max(getCombined().getWidth(), curImage.getWidth(null));
+				h = getCombined().getHeight() + curImage.getHeight(null);
+				break;
+			case LEFT:
+				w = getCombined().getWidth()+ curImage.getWidth(null);
+				h = Math.max(getCombined().getHeight(), curImage.getHeight(null));
+				break;
+			default:
+			}
+			temp = new BufferedImage(w, h, BufferedImage.TYPE_INT_RGB);
+			Graphics2D g = temp.createGraphics();
 			g.drawImage(getCombined(), 0, 0, null);
 			switch (dir) {
 			case DOWN:
@@ -58,11 +71,14 @@ public class ImageStitcher {
 			default:
 			}
 			combined = temp;
+			curImage.flush();
+			temp.flush();
 			g.dispose();
 		}
 		try {
 			ImageIO.write(combined, "PNG", new File(endPath, "combined.png"));
 		} catch (IOException e) {
+			
 			e.printStackTrace();
 		}
 		combined.flush();
