@@ -6,6 +6,7 @@ import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
+import java.awt.FileDialog;
 
 import javax.swing.*;
 import java.io.IOException;
@@ -16,6 +17,7 @@ public class Stitcher {
 	JFrame frame;
 	JTextField inputRootField;
 	JButton stitchButton;
+	JButton browseDirButton;
 	JPanel control;
 	JTextArea logBox;
 	JTextAreaOutputStream logBoxStream;
@@ -25,12 +27,12 @@ public class Stitcher {
 	String outputPath;
 	FilePile fp = null;
 	ImageStitcher sch = null;
-
+	boolean ready = false;
+	
 	private void UIInit() {
 		ActionHandler aHandler = new ActionHandler();
 		frame = new JFrame("Glue dem screencaps together dawg");
 		Toolkit tk = frame.getToolkit();
-		//File LogoFile = new File("/logo.png");
 		Image LogoImage = new BufferedImage(256, 256, 1);
 		LogoImage = tk.getImage(this.getClass().getResource("logo.png"));
 		frame.setIconImage(LogoImage);
@@ -39,6 +41,9 @@ public class Stitcher {
 		stitchButton = new JButton("Stitch");
 		stitchButton.setActionCommand("stitch");
 		stitchButton.addActionListener(aHandler);
+		browseDirButton = new JButton("Browse");
+		browseDirButton.setActionCommand("browse");
+		browseDirButton.addActionListener(aHandler);
 		logBox = new JTextArea(20, 40);
 		logBox.setEditable(false);
 		dirComboBox = new JComboBox<ImageStitcher.Direction>();
@@ -55,6 +60,7 @@ public class Stitcher {
 
 		control = new JPanel();
 		control.add(inputRootField);
+		control.add(browseDirButton);
 		control.add(new JLabel("Sticth Direction"));
 		control.add(dirComboBox);
 		control.add(new JLabel("Sort by "));
@@ -76,7 +82,7 @@ public class Stitcher {
 
 	public void stitchAction() {
 		logBox.setText("");
-		if (inputRootField.getText() != "Path for pics go here") {
+		if (ready){
 			rootPath = inputRootField.getText();
 			outputPath = rootPath;
 			if (fp == null) {
@@ -112,8 +118,27 @@ public class Stitcher {
 
 	public class ActionHandler implements ActionListener {
 		public void actionPerformed(ActionEvent e) {
-			if (e.getActionCommand() == "stitch") {
+			switch (e.getActionCommand()){
+			case "stitch":
 				stitchAction();
+				break;
+			case "browse":
+				FileDialog dial = new FileDialog(frame, "Select target folder",FileDialog.LOAD);
+				dial.setDirectory(new java.io.File(".").getAbsolutePath());
+				dial.setFile("");
+				dial.setVisible(true);
+				String dir = dial.getDirectory();
+				if (dir != null) {
+					dir = dir.substring(0, dir.length()-1);
+					dir.replace("\\","/");
+					inputRootField.setText(dir);
+					ready = true;
+				} else {
+					ready = false;
+					inputRootField.setText("Path invalid");
+				}
+				break;
+			default:
 			}
 		}
 	}

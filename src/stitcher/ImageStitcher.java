@@ -41,42 +41,44 @@ public class ImageStitcher {
 		BufferedImage temp;
 		Image curImage = null;
 		for (String path : imagePaths) {
-			try {
-				curImage = ImageIO.read(new File(path));
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-			System.out.print(path);
-			int w = 0;
-			int h = 0;
-			switch (getDir()) {
-			case DOWN:
-				w = Math.max(getCombined().getWidth(), curImage.getWidth(null));
-				h = getCombined().getHeight() + curImage.getHeight(null);
-				break;
-			case RIGHT:
-				w = getCombined().getWidth()+ curImage.getWidth(null);
-				h = Math.max(getCombined().getHeight(), curImage.getHeight(null));
-				break;
-			default:
-			}
-			temp = new BufferedImage(w, h, BufferedImage.TYPE_INT_RGB);
-			Graphics2D g = temp.createGraphics();
-			g.drawImage(getCombined(), 0, 0, null);
-			switch (getDir()) {
-			case DOWN:
-				g.drawImage(curImage, 0, getCombined().getHeight(), null);
-				break;
-			case RIGHT:
-				g.drawImage(curImage, getCombined().getWidth(), 0, null);
-				break;
-			default:
-			}
-			combined = temp;
-			curImage.flush();
-			temp.flush();
-			g.dispose();
-			System.out.println("... Done!");
+			if (!path.contains("combined.png")) {
+				try {
+					curImage = ImageIO.read(new File(path));
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+				System.out.print(path);
+				int w = 0;
+				int h = 0;
+				switch (getDir()) {
+				case DOWN:
+					w = Math.max(getCombined().getWidth(), curImage.getWidth(null));
+					h = getCombined().getHeight() + curImage.getHeight(null);
+					break;
+				case RIGHT:
+					w = getCombined().getWidth()+ curImage.getWidth(null);
+					h = Math.max(getCombined().getHeight(), curImage.getHeight(null));
+					break;
+				default:
+				}
+				temp = new BufferedImage(w, h, BufferedImage.TYPE_INT_RGB);
+				Graphics2D g = temp.createGraphics();
+				g.drawImage(getCombined(), 0, 0, null);
+				switch (getDir()) {
+				case DOWN:
+					g.drawImage(curImage, 0, getCombined().getHeight(), null);
+					break;
+				case RIGHT:
+					g.drawImage(curImage, getCombined().getWidth(), 0, null);
+					break;
+				default:
+				}
+				combined = temp;
+				curImage.flush();
+				temp.flush();
+				g.dispose();
+				System.out.println("... Done!");
+			} else System.out.println("Pre-existing output file found, skipping and replasing");
 		}
 		try {
 			ImageIO.write(combined, "PNG", new File(getEndPath(), "combined.png"));
